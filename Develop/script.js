@@ -17,8 +17,8 @@
 
 //use moment to determine past, present or future for each block and colour code appropriately
 //for loop/set attribute?
-
 //loop through blocks, need to give blocks id?
+
 //save events in local storage, clear them overnight
 //when page refreshed local storage items retrieved?
 
@@ -27,3 +27,21 @@
 
 var today = moment();
 $("#currentDay").text(today.format("MMM Do, YYYY"));
+
+function colourTimeBlocks() {
+  //this works but present hour is white not red?
+  var currentHour = moment().hour();
+  var timeBlockHours = $(".time-block");
+  for (var i = 0; i < timeBlockHours.length; i++) {
+    var currentTimeBlock = $(timeBlockHours[i]).attr("data-index");
+    if (currentHour === currentTimeBlock) {
+      $(timeBlockHours[i]).addClass("present");
+    } else if (currentHour < currentTimeBlock) {
+      $(timeBlockHours[i]).addClass("future");
+    } else if (currentHour > currentTimeBlock) {
+      $(timeBlockHours[i]).addClass("past");
+    }
+  }
+}
+
+colourTimeBlocks();
