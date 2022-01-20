@@ -28,13 +28,13 @@
 var today = moment();
 $("#currentDay").text(today.format("MMM Do, YYYY"));
 
+//this works now with == rather than ===?
 function colourTimeBlocks() {
-  //this works but present hour is white not red?
   var currentHour = moment().hour();
   var timeBlockHours = $(".time-block");
   for (var i = 0; i < timeBlockHours.length; i++) {
     var currentTimeBlock = $(timeBlockHours[i]).attr("data-index");
-    if (currentHour === currentTimeBlock) {
+    if (currentHour == currentTimeBlock) {
       $(timeBlockHours[i]).addClass("present");
     } else if (currentHour < currentTimeBlock) {
       $(timeBlockHours[i]).addClass("future");
@@ -44,4 +44,25 @@ function colourTimeBlocks() {
   }
 }
 
+function saveTask() {
+  var blockToSave = $(this).parent().attr("data-index"); //gets data index of parent block to save
+  var textArea = $("textarea");
+  for (var i = 0; i < textArea.length; i++) {
+    var currentText = $(textArea[i]).attr("id"); //gets id of text area
+    if (currentText === blockToSave) {
+      //compares data index to id, if same then log text
+      var textToSave = $("textarea.description").val();
+    }
+    //$(this).val("");
+  }
+  var task = { time: blockToSave, plan: textToSave };
+  //   //localStorage.setItem($(task).val());
+  console.log(task);
+  //   //console.log(blockToSave);
+  //   //console.log(textToSave);
+}
+
 colourTimeBlocks();
+
+var buttonClicked = $(".saveBtn");
+buttonClicked.on("click", saveTask);
