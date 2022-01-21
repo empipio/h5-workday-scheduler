@@ -44,25 +44,63 @@ function colourTimeBlocks() {
   }
 }
 
+//empty array in which to store saved tasks
+var tasks = [];
+
+//can only save one task
 function saveTask() {
   var blockToSave = $(this).parent().attr("data-index"); //gets data index of parent block to save
-  var textArea = $("textarea");
-  for (var i = 0; i < textArea.length; i++) {
-    var currentText = $(textArea[i]).attr("id"); //gets id of text area
-    if (currentText === blockToSave) {
-      //compares data index to id, if same then log text
-      var textToSave = $("textarea.description").val();
-    }
-    //$(this).val("");
+  var textArea = $(this).parent().children().eq(1);
+  var textToSave = textArea.val();
+  var task = { hour: blockToSave, plan: textToSave };
+  for (var i = 0; i < task.length; i++) {
+    tasks.push(task[i]);
   }
-  var task = { time: blockToSave, plan: textToSave };
-  //   //localStorage.setItem($(task).val());
-  console.log(task);
-  //   //console.log(blockToSave);
-  //   //console.log(textToSave);
+  localStorage.setItem("task", JSON.stringify(task));
 }
 
-colourTimeBlocks();
+//items not being rendered to screen from LS
+function renderTasks() {
+  for (var j = 0; j < tasks.length; j++) {
+    var task = tasks[j];
+    var timeBlockHours = $(".time-block");
+    for (var i = 0; i < timeBlockHours.length; i++) {
+      var addTask = $(timeBlockHours[i]).attr("data-index");
+      if (addTask === task.hour);
+      {
+        var fillText = $(this).parent().children().eq(1);
+        fillText.textContent = task[0].val();
+      }
+    }
+  }
+}
 
-var buttonClicked = $(".saveBtn");
-buttonClicked.on("click", saveTask);
+//items not being retrieved from local storage
+function init() {
+  var storedTasks = JSON.parse(localStorage.getItem("tasks"));
+
+  if (storedTasks !== null) {
+    task = storedTasks;
+  }
+
+  renderTasks();
+}
+
+// continually refreshes when preventDefault not included but cannot read when included as undefined?
+//function clearScreen(event) {
+//   var date = moment().date();
+//   event.preventDefault();
+//   if (date++) {
+//     localStorage.clear();
+//     location.reload();
+//   } else {
+//     return;
+//   }
+// }
+
+colourTimeBlocks();
+init();
+//clearScreen();
+
+var button = $(".saveBtn");
+button.on("click", saveTask);
