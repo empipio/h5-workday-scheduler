@@ -4,7 +4,7 @@ This week's task was to create a simple calendar application that allows a user 
 
 The acceptance criteria for the task were as follows:
 
-```md
+```
 GIVEN I am using a daily planner to create a schedule
 WHEN I open the planner
 THEN the current day is displayed at the top of the calendar
