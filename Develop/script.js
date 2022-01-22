@@ -28,12 +28,16 @@
 var today = moment();
 $("#currentDay").text(today.format("MMM Do, YYYY"));
 
+var todaysDate = moment();
+
 //this works now with == rather than ===?
 function colourTimeBlocks() {
   var currentHour = moment().hour();
   var timeBlockHours = $(".time-block");
+
   for (var i = 0; i < timeBlockHours.length; i++) {
     var currentTimeBlock = $(timeBlockHours[i]).attr("data-index");
+
     if (currentHour == currentTimeBlock) {
       $(timeBlockHours[i]).addClass("present");
     } else if (currentHour < currentTimeBlock) {
@@ -49,58 +53,70 @@ var tasks = [];
 
 //can only save one task
 function saveTask() {
-  var blockToSave = $(this).parent().attr("data-index"); //gets data index of parent block to save
+  var timeBlockHour = $(this).parent().attr("data-index"); //gets data index of parent block to save
   var textArea = $(this).parent().children().eq(1);
   var textToSave = textArea.val();
-  var task = { hour: blockToSave, plan: textToSave };
-  for (var i = 0; i < task.length; i++) {
-    tasks.push(task[i]);
-  }
-  localStorage.setItem("task", JSON.stringify(task));
+  var task = { hour: timeBlockHour, plan: textToSave };
+
+  tasks.push(task);
+  var dayPlan = {
+    date: todaysDate,
+    tasks: tasks,
+  };
+
+  localStorage.setItem("dayPlan", JSON.stringify(dayPlan));
 }
 
 //items not being rendered to screen from LS
 function renderTasks() {
+  // go through each task, get each task data and time
   for (var j = 0; j < tasks.length; j++) {
     var task = tasks[j];
-    var timeBlockHours = $(".time-block");
-    for (var i = 0; i < timeBlockHours.length; i++) {
-      var addTask = $(timeBlockHours[i]).attr("data-index");
-      if (addTask === task.hour);
-      {
-        var fillText = $(this).parent().children().eq(1);
-        fillText.textContent = task[0].val();
+    var timeBlockHourElements = $(".time-block");
+
+    timeBlockHourElements.each(function () {
+      var timeBlockHour = $(this).data("index");
+
+      var timeBlockHourString = timeBlockHour.toString();
+
+      if (timeBlockHourString === task.hour) {
+        var fillText = $(this).children().eq(1);
+        fillText.html(task.plan);
       }
-    }
+    });
   }
 }
 
 //items not being retrieved from local storage
 function init() {
-  var storedTasks = JSON.parse(localStorage.getItem("tasks"));
+  var dayPlan = JSON.parse(localStorage.getItem("dayPlan"));
 
-  if (storedTasks !== null) {
-    task = storedTasks;
+  if (dayPlan !== null) {
+    tasks = dayPlan.tasks;
   }
 
   renderTasks();
 }
 
 // continually refreshes when preventDefault not included but cannot read when included as undefined?
-//function clearScreen(event) {
-//   var date = moment().date();
-//   event.preventDefault();
-//   if (date++) {
-//     localStorage.clear();
-//     location.reload();
-//   } else {
-//     return;
-//   }
-// }
+function clearScreen() {
+  var dayPlan = JSON.parse(localStorage.getItem("dayPlan"));
+
+  if (dayPlan) {
+    var dayPlanDate = moment(dayPlan.date);
+
+    if (dayPlanDate.isBefore(todaysDate, "day")) {
+      localStorage.clear();
+      location.reload();
+    } else {
+      return;
+    }
+  }
+}
 
 colourTimeBlocks();
 init();
-//clearScreen();
+clearScreen();
 
 var button = $(".saveBtn");
 button.on("click", saveTask);
