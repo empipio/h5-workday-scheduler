@@ -25,6 +25,6 @@ WHEN I refresh the page
 THEN the saved events persist
 ```
 
-![screenshot of completed application]()
+![screenshot of completed application](./assets/screenshot.png)
 
-The link for the project is as follows:
+The link for the project is as follows: https://empipio.github.io/h5-workday-scheduler/
